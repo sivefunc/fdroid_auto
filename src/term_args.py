@@ -21,7 +21,7 @@ There is NO WARRANTY, to the extent permitted by law.
 Written by a human""")
 
     parser.add_argument(
-            '-u', '--unistall',
+            '-u', '--uninstall',
             help="Uninstall packages listed from FILE on device using adb",
             type=str,
             metavar="[FILE]")
