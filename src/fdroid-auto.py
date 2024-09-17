@@ -1,11 +1,13 @@
 from term_args import term_args
-from packages_from_file import packages_from_file
+from packages import (packages_from_file,
+                        uninstall_packages)
 
 def main():
     t_args = term_args()
     if t_args.uninstall:
         file_path = t_args.uninstall
-        uninstall_packages = packages_from_file(file_path)
+        packages_to_uninstall = packages_from_file(file_path)
+        uninstall_packages(packages_to_uninstall)
 
 if __name__ == '__main__':
     main()
