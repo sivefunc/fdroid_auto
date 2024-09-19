@@ -1,4 +1,8 @@
-import subprocess
+import urllib.request   # GET requests for downloading F-droid apks.
+import subprocess       # subprocess.run for adb commands
+import json             # json.load
+import io               # io.DEFAULT_BUFFER_SIZE
+import os               # os.path.join
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     p_uninstalled = p_not_uninstalled = 0
@@ -23,6 +27,51 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
 
     return p_uninstalled, p_not_uninstalled
 
+def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
+    p_downloaded = p_not_downloaded = 0
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+
+    for idx, package in enumerate(packages):
+        url = f"https://f-droid.org/api/v1/packages/{package}"
+        request = urllib.request.Request(url)
+
+        try:
+            print(f"GET suggested version on: {url}")
+            with urllib.request.urlopen(request) as response:
+                file = response.read()
+
+        except Exception as error:
+            message = error
+            p_not_downloaded += 1
+        
+        else:
+            version = json.loads(file)['suggestedVersionCode']
+            package_full = f"{package}_{version}.apk"
+            apk_url = f"https://f-droid.org/repo/{package_full}"
+            path_to_save_apk = os.path.join(dir_path, package_full)
+            with (open(os.path.join(dir_path, package_full), "w+b") as
+                    binary_file):
+
+                request = urllib.request.Request(apk_url)
+                try:
+                    print(f"GET apk version {version} on: {apk_url}")
+                    with urllib.request.urlopen(request) as response:
+                        while (apk_bytes := response.read(
+                                io.DEFAULT_BUFFER_SIZE)):
+                            binary_file.write(apk_bytes)
+                    
+                except Exception as error:
+                    message = error
+                    p_not_downloaded += 1
+
+                else:
+                    message = f"Sucess saved on {path_to_save_apk}"
+                    p_downloaded += 1
+
+        print(f"{idx+1} | {package}: {message}")
+
+    return p_downloaded, p_not_downloaded
 
 def packages_from_file(file_path: str) -> list[str]:
     """

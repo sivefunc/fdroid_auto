@@ -36,7 +36,8 @@ Written by a human""")
             '-d', '--download',
             help="Download fdroid packages listed from FILE using API + wget",
             type=str,
-            metavar="[FILE]")
+            nargs=2,
+            metavar="[FILE DIR]")
 
     args = parser.parse_args()
     return args

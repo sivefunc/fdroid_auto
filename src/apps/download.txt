@@ -1,0 +1,10 @@
+this.package.doesnt.exist.1
+this.package.doesnt.exist.2
+this.package.doesnt.exist.3
+this.package.doesnt.exist.4
+
+# lightweight apps (this is just for testing) (I don't actually use this)
+# delete later
+rkr.simplekeyboard.inputmethod
+org.fdroid.fdroid
+de.tobiasbielefeld.searchbar
