@@ -34,10 +34,10 @@ Written by a human""")
 
     parser.add_argument(
             '-d', '--download',
-            help="Download fdroid packages listed from FILE using API + wget",
+            help="Download fdroid .apks listed from FILE and push them into DIR",
             type=str,
             nargs=2,
-            metavar="[FILE DIR]")
+            metavar=("[FILE]", "[DIR]"))
 
     args = parser.parse_args()
     return args

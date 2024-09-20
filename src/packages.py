@@ -15,8 +15,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
         # There are returncode != 0 that do not have stderr output only to
         # stdout, e.g: Failure [not installed for 0]
         message = (result.stderr if result.stderr else result.stdout).decode()
-        if message.endswith('\n'):
-            message = message[:-1]
+        message = message.rstrip('\n')
 
         if result.returncode != 0:
             p_not_uninstalled += 1
@@ -94,8 +93,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
         # There are returncode != 0 that do not have stderr output only to
         # stdout, e.g: Failure [not installed for 0]
         message = (result.stderr if result.stderr else result.stdout).decode()
-        if message.endswith('\n'):
-            message = message[:-1]
+        message = message.rstrip('\n')
 
         if result.returncode != 0:
             p_not_installed += 1
