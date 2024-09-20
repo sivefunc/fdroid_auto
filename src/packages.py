@@ -81,11 +81,10 @@ def install_packages(dir_path: str) -> tuple[int, int]:
     
     # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
     install_command = "adb install".split()
-    idx = 0
-    for package in os.listdir(dir_path):
-        if not package.endswith('.apk'):
-            continue
+    packages = [package for package in os.listdir(dir_path) \
+                    if package.endswith('.apk')]
 
+    for idx, package in enumerate(packages):
         result = subprocess.run(
                 install_command + [os.path.join(dir_path, package)],
                 capture_output=True)
@@ -102,7 +101,6 @@ def install_packages(dir_path: str) -> tuple[int, int]:
             p_installed += 1
 
         print(f"{idx+1}|{package}: {message}")
-        idx += 1
 
     return p_installed, p_not_installed
 
