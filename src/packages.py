@@ -14,9 +14,10 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
 
         # There are returncode != 0 that do not have stderr output only to
         # stdout, e.g: Failure [not installed for 0]
-        message = result.stderr if result.stderr else result.stdout
-        message = str(message)[2:-3] # Remove b' prefix
-                                     # Remove '\n suffix
+        message = (result.stderr if result.stderr else result.stdout).decode()
+        if message.endswith('\n'):
+            message = message[:-1]
+
         if result.returncode != 0:
             p_not_uninstalled += 1
 
@@ -72,6 +73,40 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
         print(f"{idx+1} | {package}: {message}")
 
     return p_downloaded, p_not_downloaded
+
+def install_packages(dir_path: str) -> tuple[int, int]:
+    p_installed = p_not_installed = 0
+    if not os.path.isdir(dir_path):
+        print(f"Path: {dir_path} is not a directory")
+        return p_installed, p_not_installed
+    
+    # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
+    install_command = "adb install".split()
+    idx = 0
+    for package in os.listdir(dir_path):
+        if not package.endswith('.apk'):
+            continue
+
+        result = subprocess.run(
+                install_command + [os.path.join(dir_path, package)],
+                capture_output=True)
+
+        # There are returncode != 0 that do not have stderr output only to
+        # stdout, e.g: Failure [not installed for 0]
+        message = (result.stderr if result.stderr else result.stdout).decode()
+        if message.endswith('\n'):
+            message = message[:-1]
+
+        if result.returncode != 0:
+            p_not_installed += 1
+
+        else:
+            p_installed += 1
+
+        print(f"{idx+1}|{package}: {message}")
+        idx += 1
+
+    return p_installed, p_not_installed
 
 def packages_from_file(file_path: str) -> list[str]:
     """
