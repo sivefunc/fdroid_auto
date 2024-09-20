@@ -84,6 +84,9 @@ def install_packages(dir_path: str) -> tuple[int, int]:
     packages = [package for package in os.listdir(dir_path) \
                     if package.endswith('.apk')]
 
+    if not packages:
+        print(f"No .apk files to install on {dir_path}")
+
     for idx, package in enumerate(packages):
         result = subprocess.run(
                 install_command + [os.path.join(dir_path, package)],
