@@ -5,6 +5,48 @@ import io               # io.DEFAULT_BUFFER_SIZE
 import os               # os.path.join
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
+    """
+    Uninstall from Android device through ADB the .apks names listed on
+    packages list[str].
+
+    Parameters
+    ----------
+    
+    packages : list[str]
+        List of strings where each string is the name of the package to
+        uninstall.
+
+    Returns
+    -------
+    tuple[int, int]:
+        Packages uninstalled and packages not uninstalled respectively.
+
+    Notes
+    -----
+    packages_from_file() can be used as argument to packages parameter,
+    because it strips whitespaces and removes comments '#'.
+    
+    Whether or not an error happens while uninstalling an app it will
+    show a message and then continue to the next one and so on.
+
+    Uninstallation is done by the command:
+    
+    adb shell pm uninstall -k --user 0
+    |   |     |  |         |  |
+    |   |     |  |         |  |_ Remove the apk from the default (first)
+    |   |     |  |         |     user, it's like directories.
+    |   |     |  |         |   
+    |   |     |  |         |_ Keep cache and data, e.g: Contacts.
+    |   |     |  |
+    |   |     |  |_ Command there are others like install-existing
+    |   |     |
+    |   |     |_ Package Manager
+    |   |
+    |   |_ Instruction to run a command
+    |
+    |_ CLI Tool that communicates with the device.
+    """
+
     p_uninstalled = p_not_uninstalled = 0
     uninstall_command = "adb shell pm uninstall -k --user 0".split()
     for idx, package in enumerate(packages):
@@ -17,6 +59,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
         message = (result.stderr if result.stderr else result.stdout).decode()
         message = message.rstrip('\n')
 
+        # Error
         if result.returncode != 0:
             p_not_uninstalled += 1
 
@@ -28,6 +71,51 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     return p_uninstalled, p_not_uninstalled
 
 def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
+    """
+    Download to a DIR_PATH in Host machine (not Android device) the
+    F-droid .apks (Suggested Versions) listed on PACKAGES list[str].
+
+    The .apks are saved in the following format:
+
+    PackageName_SuggestedVersion.apk
+
+    Parameters
+    ----------
+    
+    packages : list[str]
+        List of strings where each string is the name of the F-droid
+        package to download.
+
+    dir_path : str
+        String containing the path to the directory where the 
+        .apks are going to be stored on Host machine.
+
+    Returns
+    -------
+    tuple[int, int]:
+        Packages downloaded and packages not downloaded respectively.
+
+    Notes
+    -----
+    packages_from_file() can be used as argument to packages parameter,
+    because it strips whitespaces and removes comments '#'.
+
+    If directory doesn't exist it creates it.
+
+    Whether or not an error happens while downloading an app it will
+    show a message and then continue to the next one and so on.
+
+    Downloading of F-droid apps is done on the following way:
+
+    GET request to: https://f-droid.org/api/v1/packages/[PACKAGE_NAME]
+        This way we get the .json file containing the Suggested Version
+        To install.
+
+    GET request to:
+        https://f-droid.org/repo/[PackageName_SuggestedVersion.apk]
+        This way we get the .apk file.
+    """
+
     p_downloaded = p_not_downloaded = 0
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
@@ -74,6 +162,37 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     return p_downloaded, p_not_downloaded
 
 def install_packages(dir_path: str) -> tuple[int, int]:
+    """
+    Install to Android device through ADB the .apks listed on
+    DIR_PATH directory str.
+
+    Parameters
+    ----------
+    dir_path : str
+        String containing the path to the directory where the 
+        .apks are located.
+
+    Returns
+    -------
+    tuple[int, int]:
+        Packages installed and packages not installed respectively.
+
+    Notes
+    -----
+    Whether or not an error happens while uninstalling an app it will
+    show a message and then continue to the next one and so on.
+
+    The installation command is:
+
+    adb install
+
+    Why is it different from the uninstall function?
+        1. It's shorter (adb shell pm install --user 0)
+        2. pm install requires pushing the contents (adb push) to the
+           device and then 'cp' it to /data/local/tmp/ so it's easier
+           just this one little command.
+    """
+
     p_installed = p_not_installed = 0
     if not os.path.isdir(dir_path):
         print(f"Path: {dir_path} is not a directory")
