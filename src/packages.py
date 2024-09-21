@@ -3,7 +3,10 @@ import urllib.request   # GET requests for downloading F-droid apks.
 import subprocess       # subprocess.run for adb commands
 import json             # json.load
 import io               # io.DEFAULT_BUFFER_SIZE
-import os               # os.path.join
+import os               # os.path.join, os.path.listdir, os.mkdir
+from defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
+from rich.live import Live
+from rich.table import Table
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     """
@@ -48,26 +51,45 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     |_ CLI Tool that communicates with the device.
     """
 
+    table = Table(
+            title = "Uninstalling",
+            highlight=True
+            )
+
+    table.add_column("N")
+    table.add_column("Package")
+    table.add_column("Result")
+
     p_uninstalled = p_not_uninstalled = 0
     uninstall_command = "adb shell pm uninstall -k --user 0".split()
-    for idx, package in enumerate(packages):
-        result = subprocess.run(
-                uninstall_command + [package],
-                capture_output=True)
 
-        # There are returncode != 0 that do not have stderr output only to
-        # stdout, e.g: Failure [not installed for 0]
-        message = (result.stderr if result.stderr else result.stdout).decode()
-        message = message.rstrip('\n')
+    with Live(table, refresh_per_second=30):
+        for idx, package in enumerate(packages):
+            result = subprocess.run(
+                    uninstall_command + [package],
+                    capture_output=True)
 
-        # Error
-        if result.returncode != 0:
-            p_not_uninstalled += 1
+            # There are returncode != 0 that do not have stderr output only to
+            # stdout, e.g: Failure [not installed for 0]
+            message = (result.stderr if result.stderr else result.stdout)
+            message = message.decode().rstrip('\n')
 
-        else:
-            p_uninstalled += 1
+            # Error
+            if result.returncode != 0:
+                style = ERROR_STYLE
+                p_not_uninstalled += 1
 
-        print(f"{idx+1}|{package}: {message}")
+            else:
+                style = SUCCESS_STYLE
+                p_uninstalled += 1
+            
+            table.add_row(
+                    f"{idx+1}",
+                    f"{package}",
+                    f"{message}",
+                    style=style)
+
+            table.add_section()
 
     return p_uninstalled, p_not_uninstalled
 
@@ -117,54 +139,82 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
         This way we get the .apk file.
     """
 
+    table = Table(
+            title="Downloading",
+            highlight=True,
+            )
+
+    table.add_column("N")
+    table.add_column("Package")
+    table.add_column("Message")
+
     p_downloaded = p_not_downloaded = 0
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
 
-    for idx, package in enumerate(packages):
-        url = f"https://f-droid.org/api/v1/packages/{package}"
-        request = urllib.request.Request(url)
+    with Live(table, refresh_per_second=30):
+        for idx, package in enumerate(packages):
+            url = f"https://f-droid.org/api/v1/packages/{package}"
+            request = urllib.request.Request(url)
 
-        try:
-            print(f"GET suggested version on: {url}")
-            with urllib.request.urlopen(request) as response:
-                file = response.read()
+            try:
+                table.add_row(
+                        f"{idx+1}",
+                        f"{package}",
+                        f"GET suggested version on: {url}")
 
-        except (urllib.error.URLError,
-                urllib.error.HTTPError,
-                urllib.error.ContentTooShortError) as urllib_error:
+                with urllib.request.urlopen(request) as response:
+                    file = response.read()
 
-            message = urllib_error
-            p_not_downloaded += 1
-        
-        else:
-            version = json.loads(file)['suggestedVersionCode']
-            package_full = f"{package}_{version}.apk"
-            apk_url = f"https://f-droid.org/repo/{package_full}"
-            path_to_save_apk = os.path.join(dir_path, package_full)
-            with (open(os.path.join(dir_path, package_full), "w+b") as
-                    binary_file):
+            # Handling of urllib exceptions
+            except (urllib.error.URLError,
+                    urllib.error.HTTPError,
+                    urllib.error.ContentTooShortError) as urllib_error:
 
-                request = urllib.request.Request(apk_url)
-                try:
-                    print(f"GET apk version {version} on: {apk_url}")
-                    with urllib.request.urlopen(request) as response:
-                        while (apk_bytes := response.read(
-                                io.DEFAULT_BUFFER_SIZE)):
-                            binary_file.write(apk_bytes)
+                style = ERROR_STYLE
+                message = urllib_error
+                p_not_downloaded += 1
+            
+            else:
+                version = json.loads(file)['suggestedVersionCode']
+                package_full = f"{package}_{version}.apk"
+                apk_url = f"https://f-droid.org/repo/{package_full}"
+                path_to_save_apk = os.path.join(dir_path, package_full)
+                with (open(os.path.join(dir_path, package_full), "w+b") as
+                        binary_file):
 
-                except (urllib.error.URLError,
-                        urllib.error.HTTPError,
-                        urllib.error.ContentTooShortError) as urllib_error:
+                    request = urllib.request.Request(apk_url)
+                    try:
+                        table.add_row(
+                                f"",
+                                f"",
+                                f"GET apk version on {version} on: {apk_url}")
 
-                    message = urllib_error
-                    p_not_downloaded += 1
+                        with urllib.request.urlopen(request) as response:
+                            while (apk_bytes := response.read(
+                                    io.DEFAULT_BUFFER_SIZE)):
+                                binary_file.write(apk_bytes)
 
-                else:
-                    message = f"Sucess saved on {path_to_save_apk}"
-                    p_downloaded += 1
+                    except (urllib.error.URLError,
+                            urllib.error.HTTPError,
+                            urllib.error.ContentTooShortError) as urllib_error:
 
-        print(f"{idx+1} | {package}: {message}")
+                        style = ERROR_STYLE
+                        message = urllib_error
+                        p_not_downloaded += 1
+
+                    else:
+                        style = SUCCESS_STYLE
+                        message = f"Sucess saved on {path_to_save_apk}"
+                        p_downloaded += 1
+
+            table.add_row(
+                    f"",
+                    f"",
+                    f"{message}", style=style)
+
+            table.add_section()
+
 
     return p_downloaded, p_not_downloaded
 
@@ -200,9 +250,10 @@ def install_packages(dir_path: str) -> tuple[int, int]:
            just this one little command.
     """
 
+
     p_installed = p_not_installed = 0
     if not os.path.isdir(dir_path):
-        print(f"Path: {dir_path} is not a directory")
+        CONSOLE.print(f"Path: {dir_path} is not a directory", style="error")
         return p_installed, p_not_installed
     
     # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
@@ -211,25 +262,45 @@ def install_packages(dir_path: str) -> tuple[int, int]:
                     if package.endswith('.apk')]
 
     if not packages:
-        print(f"No .apk files to install on {dir_path}")
+        CONSOLE.print(f"No .apk files to install on {dir_path}", style="error")
+        return p_installed, p_not_installed
 
-    for idx, package in enumerate(packages):
-        result = subprocess.run(
-                install_command + [os.path.join(dir_path, package)],
-                capture_output=True)
+    table = Table(
+            title = "Installing",
+            highlight=True
+            )
 
-        # There are returncode != 0 that do not have stderr output only to
-        # stdout, e.g: Failure [not installed for 0]
-        message = (result.stderr if result.stderr else result.stdout).decode()
-        message = message.rstrip('\n')
+    table.add_column("N")
+    table.add_column("Package")
+    table.add_column("Result")
 
-        if result.returncode != 0:
-            p_not_installed += 1
 
-        else:
-            p_installed += 1
+    with Live(table, refresh_per_second=30):
+        for idx, package in enumerate(packages):
+            result = subprocess.run(
+                    install_command + [os.path.join(dir_path, package)],
+                    capture_output=True)
 
-        print(f"{idx+1}|{package}: {message}")
+            # There are returncode != 0 that do not have stderr output only to
+            # stdout, e.g: Failure [not installed for 0]
+            message = result.stderr if result.stderr else result.stdout
+            message = message.decode().rstrip('\n')
+
+            if result.returncode != 0:
+                style = ERROR_STYLE
+                p_not_installed += 1
+
+            else:
+                style = SUCCESS_STYLE
+                p_installed += 1
+
+            table.add_row(
+                    f"{idx+1}",
+                    f"{package}",
+                    f"{message}",
+                    style=style)
+
+            table.add_section()
 
     return p_installed, p_not_installed
 

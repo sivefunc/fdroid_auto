@@ -1,3 +1,8 @@
+from rich.panel import Panel
+from rich.live import Live
+from rich.table import Table
+from rich import print
+from defaults import CONSOLE
 from term_args import term_args
 from packages import (packages_from_file,
                         uninstall_packages,
@@ -6,6 +11,7 @@ from packages import (packages_from_file,
 
 def main():
     t_args = term_args()
+
     if t_args.uninstall:
         file_path = t_args.uninstall
         packages_to_uninstall = packages_from_file(file_path)
