@@ -1,3 +1,4 @@
+import urllib.error     # URLError, HTTPError, ContentTooShortError
 import urllib.request   # GET requests for downloading F-droid apks.
 import subprocess       # subprocess.run for adb commands
 import json             # json.load
@@ -129,8 +130,11 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             with urllib.request.urlopen(request) as response:
                 file = response.read()
 
-        except Exception as error:
-            message = error
+        except (urllib.error.URLError,
+                urllib.error.HTTPError,
+                urllib.error.ContentTooShortError) as urllib_error:
+
+            message = urllib_error
             p_not_downloaded += 1
         
         else:
@@ -148,9 +152,12 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                         while (apk_bytes := response.read(
                                 io.DEFAULT_BUFFER_SIZE)):
                             binary_file.write(apk_bytes)
-                    
-                except Exception as error:
-                    message = error
+
+                except (urllib.error.URLError,
+                        urllib.error.HTTPError,
+                        urllib.error.ContentTooShortError) as urllib_error:
+
+                    message = urllib_error
                     p_not_downloaded += 1
 
                 else:
