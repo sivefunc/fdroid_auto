@@ -70,7 +70,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     p_uninstalled = p_not_uninstalled = 0
     uninstall_command = "adb shell pm uninstall -k --user 0".split()
 
-    with Live(table, refresh_per_second=30):
+    with Live(table, refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     uninstall_command + [package],
@@ -302,7 +302,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
             highlight=True
             )
 
-    with Live(table, refresh_per_second=30):
+    with Live(table, refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     install_command + [os.path.join(dir_path, package)],
