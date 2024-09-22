@@ -55,6 +55,30 @@ Written by a human""")
             nargs=2,
             metavar=("[FILE]", "[DIR]"))
 
+    parser.add_argument(
+            '-n','--notation',
+            action='version',
+            help="Shows how to format the FILE, default values and exit",
+            version="""
+Comments
+Written using the hash symbol '#'
+Everything after a '#' get's ignored.
+Empty lines will be deleted.
+
+e.g This is a comment
+-------------------------------------------------------------------------------
+Packages names
+
+These follow the normal android package name convention:
+http://stackoverflow.com/questions/6273892/ddg#6273935
+
+e.g:
+
+org.fdroid.fdroid
+-------------------------------------------------------------------------------
+Check apps/uninstall.txt and apps/download.txt to know the examples.
+""")
+
     # No arguments given, I just decided to leave it here.
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
