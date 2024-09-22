@@ -4,9 +4,19 @@ import subprocess       # subprocess.run for adb commands
 import json             # json.load
 import io               # io.DEFAULT_BUFFER_SIZE
 import os               # os.path.join, os.path.listdir, os.mkdir
-from defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
+
 from rich.live import Live
 from rich.table import Table
+from rich.console import Group
+from rich.progress import (
+        BarColumn,
+        Progress,
+        TaskProgressColumn,
+        TimeElapsedColumn,
+        TimeRemainingColumn,
+        DownloadColumn
+        )
+from defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     """
@@ -52,13 +62,10 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     """
 
     table = Table(
+            "N", "Package", "Message",
             title = "Uninstalling",
             highlight=True
             )
-
-    table.add_column("N")
-    table.add_column("Package")
-    table.add_column("Result")
 
     p_uninstalled = p_not_uninstalled = 0
     uninstall_command = "adb shell pm uninstall -k --user 0".split()
@@ -67,7 +74,8 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     uninstall_command + [package],
-                    capture_output=True)
+                    capture_output=True,
+                    check=False)
 
             # There are returncode != 0 that do not have stderr output only to
             # stdout, e.g: Failure [not installed for 0]
@@ -140,19 +148,30 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     """
 
     table = Table(
+            "N", "Package", "Message",
             title="Downloading",
             highlight=True,
             )
-
-    table.add_column("N")
-    table.add_column("Package")
-    table.add_column("Message")
 
     p_downloaded = p_not_downloaded = 0
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
 
-    with Live(table, refresh_per_second=30):
+    progress_columns = (
+        "[progress.description]{task.description}",
+        BarColumn(),
+        TaskProgressColumn(),
+        "Elapsed:", TimeElapsedColumn(),
+        "Remaining:", TimeRemainingColumn(),
+        "Memory:", DownloadColumn()
+    )
+
+    progress = Progress(*progress_columns)
+    with Live(
+            Group(table, progress),
+            refresh_per_second=30,
+            vertical_overflow="visible"):
+
         for idx, package in enumerate(packages):
             url = f"https://f-droid.org/api/v1/packages/{package}"
             request = urllib.request.Request(url)
@@ -186,14 +205,24 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                     request = urllib.request.Request(apk_url)
                     try:
                         table.add_row(
-                                f"",
-                                f"",
+                                "",
+                                "",
                                 f"GET apk version on {version} on: {apk_url}")
 
                         with urllib.request.urlopen(request) as response:
+                            size = int(response.headers["Content-Length"])
+                            
+                            downloading_task = progress.add_task(
+                                    "Downloading...", total=size)
+
                             while (apk_bytes := response.read(
                                     io.DEFAULT_BUFFER_SIZE)):
                                 binary_file.write(apk_bytes)
+                                progress.update(
+                                        downloading_task,
+                                        advance=io.DEFAULT_BUFFER_SIZE)
+
+                            progress.remove_task(downloading_task)
 
                     except (urllib.error.URLError,
                             urllib.error.HTTPError,
@@ -209,8 +238,8 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                         p_downloaded += 1
 
             table.add_row(
-                    f"",
-                    f"",
+                    "",
+                    "",
                     f"{message}", style=style)
 
             table.add_section()
@@ -250,36 +279,35 @@ def install_packages(dir_path: str) -> tuple[int, int]:
            just this one little command.
     """
 
-
     p_installed = p_not_installed = 0
     if not os.path.isdir(dir_path):
-        CONSOLE.print(f"Path: {dir_path} is not a directory", style="error")
+        CONSOLE.print(
+                f"Path: {dir_path} is not a directory",
+                style=ERROR_STYLE)
         return p_installed, p_not_installed
     
     # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
     install_command = "adb install".split()
-    packages = [package for package in os.listdir(dir_path) \
-                    if package.endswith('.apk')]
+    packages = [apk for apk in os.listdir(dir_path) if apk.endswith('.apk')]
 
     if not packages:
-        CONSOLE.print(f"No .apk files to install on {dir_path}", style="error")
+        CONSOLE.print(
+                f"No .apk files to install on {dir_path}",
+                style=ERROR_STYLE)
         return p_installed, p_not_installed
 
     table = Table(
+            "N", "Package", "Message",
             title = "Installing",
             highlight=True
             )
-
-    table.add_column("N")
-    table.add_column("Package")
-    table.add_column("Result")
-
 
     with Live(table, refresh_per_second=30):
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     install_command + [os.path.join(dir_path, package)],
-                    capture_output=True)
+                    capture_output=True,
+                    check=False)
 
             # There are returncode != 0 that do not have stderr output only to
             # stdout, e.g: Failure [not installed for 0]
@@ -321,7 +349,7 @@ def packages_from_file(file_path: str) -> list[str]:
     """
 
     packages = []
-    with open(file_path, "r") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         while (line := file.readline()):
             # Remove everything to the right of the comment (even the \n)
             # If comment not found then only \n will be deleted.
