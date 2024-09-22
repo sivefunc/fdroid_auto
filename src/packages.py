@@ -9,6 +9,7 @@ Do 'man adb' that way you know what every command does.
 Check also every function Notes.
 """
 
+# Built-in (hopefully)
 import urllib.error     # URLError, HTTPError, ContentTooShortError
 import urllib.request   # GET requests for downloading F-droid apks.
 import subprocess       # subprocess.run for adb commands
@@ -16,6 +17,7 @@ import json             # json.load
 import io               # io.DEFAULT_BUFFER_SIZE
 import os               # os.path.join, os.path.listdir, os.mkdir
 
+# Rich library
 from rich.panel import Panel
 from rich.align import Align
 from rich.live import Live
@@ -29,6 +31,8 @@ from rich.progress import (
         TimeRemainingColumn,
         DownloadColumn
         )
+
+# Global Rich variables shared between fdroid_auto.py and this module.
 from defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
@@ -72,8 +76,20 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     |   |_ Instruction to run a command
     |
     |_ CLI Tool that communicates with the device.
-    """
 
+    You can do ab shell pm install-existing in case of wanting to
+    recover it. Although on my phone It doesn't work for packages that
+    are not "system level", so org.lineageos.jelly works but
+    org.fdroid.fdroid doesn't.
+    """
+    
+    #  ________________________
+    # | N | Packages | Message |
+    #  ------------------------
+    # | 1 | abc.def  | Success |
+    #  ------------------------
+    # | 2 | ghi.jkl  | Error   |
+    #  ------------------------
     table = Align.center(
                 Table(
                 # Headers
@@ -110,12 +126,16 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
                 style = SUCCESS_STYLE
                 p_uninstalled += 1
 
+            # e.g: 10 | org.lineageos | SUCCESS
             table.renderable.add_row(
                     f"{idx+1}",
                     f"{package}",
                     f"{message}",
                     style=style)
 
+            # Add a line by default it doesn't add a line each time a row
+            # get's added, it's useful in case you want to have multiple rows
+            # in a single row like in download_packages()
             table.renderable.add_section()
 
     return p_uninstalled, p_not_uninstalled
@@ -164,8 +184,20 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     GET request to:
         https://f-droid.org/repo/[PackageName_SuggestedVersion.apk]
         This way we get the .apk file.
+
+    I use the suggested version instead of the newest because these are
+    on "beta" so probably has some problems.
+
+    add an update packages function()?
     """
 
+    #  ________________________
+    # | N | Packages | Message |
+    #  ------------------------
+    # | 1 | abc.def  | Success |
+    #  ------------------------
+    # | 2 | ghi.jkl  | Error   |
+    #  ------------------------
     table = Align.center(
                 Table(
                 # Headers
@@ -180,6 +212,8 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
         CONSOLE.print(f"Path: {dir_path} doesn't exist, creating...")
         os.mkdir(dir_path)
 
+    # Downloading @@@-------- 20.05% Elapsed: 17:29 Remaining: 13:37 Memory:
+    #                                                                32/64MB
     progress_columns = (
         "[progress.description]{task.description}",
         BarColumn(),
@@ -236,8 +270,8 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                     request = urllib.request.Request(apk_url)
                     try:
                         table.renderable.add_row(
-                                "",
-                                "",
+                                "", # Empty headers these were set prior on
+                                "", # GET request to suggested version.
                                 f"GET apk version on {version} on: {apk_url}")
 
                         with urllib.request.urlopen(request) as response:
@@ -247,7 +281,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
 
                             # Reading the bytes and saving it into file
                             # In chunks of io.DEFAULT_BUFFER_SIZE
-                            # to measure time.
+                            # to measure time and to avoid RAM problems?
                             while (apk_bytes := response.read(
                                     io.DEFAULT_BUFFER_SIZE)):
                                 binary_file.write(apk_bytes)
@@ -271,12 +305,25 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                         message = f"Sucess saved on {path_to_save_apk}"
                         p_downloaded += 1
 
+            # We set empty the first header and second header because it was
+            # set prior to this check the GET request suggested version.
+            # So having three times the same thing is not useful.
             table.renderable.add_row(
                     "",
                     "",
                     f"{message}", style=style)
 
             table.renderable.add_section()
+            # Add the line to separate this download from others download.
+            # an succes download should look like this:
+            #  _____________________________________________________________
+            # | N | Packages | Message                                      | 
+            #  -------------------------------------------------------------|
+            # | 1 | abc.def  | GET suggested version on API/abc.def         |
+            # |   |          | GET apk version 12.34 on API/abc.def_version |
+            # |   |          | Success saved on apps/abc.def.apk            |
+            #  -SECTION-----------------------------------------------------
+            # | 2 |
 
     return p_downloaded, p_not_downloaded
 
@@ -367,7 +414,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
                     f"{message}",
                     style=style)
 
-            table.renderable.add_section()
+            table.renderable.add_section() # Add a line between each row.
 
     return p_installed, p_not_installed
 
