@@ -38,19 +38,21 @@ Written by a human""")
 
     parser.add_argument(
             '-u', '--uninstall',
-            help="Uninstall packages listed from FILE on device using adb",
+            help="Uninstall ALL packages listed from FILE on device using adb",
             type=str,
             metavar="[FILE]")
 
     parser.add_argument(
             '-i', '--install',
-            help="Install packages .apk listed from DIR on device using adb",
+            help="Install ALL packages .apk listed from DIR on device using"
+                " " "adb",
             type=str,
             metavar="[DIR]")
 
     parser.add_argument(
             '-d', '--download',
-            help="Download fdroid .apks listed from FILE and push them into DIR",
+            help="Download ALL fdroid .apks listed from FILE and push them into"
+                " " "DIR",
             type=str,
             nargs=2,
             metavar=("[FILE]", "[DIR]"))
