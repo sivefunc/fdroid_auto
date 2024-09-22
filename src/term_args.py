@@ -58,7 +58,7 @@ Written by a human""")
     parser.add_argument(
             '-n','--notation',
             action='version',
-            help="Shows how to format the FILE, default values and exit",
+            help="Shows how to format the FILE and exit",
             version="""
 Comments
 Written using the hash symbol '#'
