@@ -21,8 +21,18 @@ def term_args() -> argparse.Namespace:
             prog="fdroid-auto",
             formatter_class=argparse.RawTextHelpFormatter,
             usage='%(prog)s [options]',
-            description="Little program to automate installation and removal"
-                        " of android apps.")
+            description=
+"""
+F-droid auto is a very little program that automates the process of:
+
+    First                   Second                  Last
+ ______________          _____________          ____________
+|              |        |  internet   |        |            |
+| Uninstalling | ---->  | Downloading | -----> | Installing |
+.______________.        ._____________.        .____________.
+
+F-droid apks through ADB.
+""")
 
     parser.add_argument(
             '-v','--version',
@@ -43,19 +53,19 @@ Written by a human""")
             metavar="[FILE]")
 
     parser.add_argument(
-            '-i', '--install',
-            help="Install ALL packages .apk listed from DIR on device using"
-                " " "adb",
-            type=str,
-            metavar="[DIR]")
-
-    parser.add_argument(
             '-d', '--download',
             help="Download ALL fdroid .apks listed from FILE and push them into"
                 " " "DIR",
             type=str,
             nargs=2,
             metavar=("[FILE]", "[DIR]"))
+
+    parser.add_argument(
+            '-i', '--install',
+            help="Install ALL packages .apk listed from DIR on device using"
+                " " "adb",
+            type=str,
+            metavar="[DIR]")
 
     parser.add_argument(
             '-n','--notation',

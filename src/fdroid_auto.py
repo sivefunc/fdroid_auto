@@ -13,7 +13,7 @@ from packages import (packages_from_file,
 
 def main():
     """
-    F-droid is a very little program that automates the process of:
+    F-droid auto is a very little program that automates the process of:
      ______________          _____________          ____________
     |              |        |  internet   |        |            |
     | Uninstalling | ---->  | Downloading | -----> | Installing |
