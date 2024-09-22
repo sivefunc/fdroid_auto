@@ -1,6 +1,22 @@
-import argparse
+""" Single function just to parse CLI args """
 
-def term_args():
+import argparse
+import sys
+
+def term_args() -> argparse.Namespace:
+    """
+    Analyzes sys.argv to map the text to options.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    argparse.Namespace
+        C struct in python where each member is an option. 
+    """
+
     parser = argparse.ArgumentParser(
             prog="fdroid-auto",
             formatter_class=argparse.RawTextHelpFormatter,
@@ -38,6 +54,11 @@ Written by a human""")
             type=str,
             nargs=2,
             metavar=("[FILE]", "[DIR]"))
+
+    # No arguments given, I just decided to leave it here.
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     args = parser.parse_args()
     return args

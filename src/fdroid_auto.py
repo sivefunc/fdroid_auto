@@ -1,3 +1,9 @@
+"""
+This is the entry point where everything is going to start being executed.
+python3 fdroid_auto.py --help
+To get you informated and If wanna look deeper read the code.
+"""
+
 from defaults import CONSOLE, SUCCESS_STYLE, ERROR_STYLE
 from term_args import term_args
 from packages import (packages_from_file,
@@ -6,6 +12,16 @@ from packages import (packages_from_file,
                         install_packages)
 
 def main():
+    """
+    F-droid is a very little program that automates the process of:
+     ______________          _____________          ____________
+    |              |        |  internet   |        |            |
+    | Uninstalling | ---->  | Downloading | -----> | Installing |
+    .______________.        ._____________.        .____________.
+
+    F-droid apks through ADB.
+    """
+
     t_args = term_args()
 
     if t_args.uninstall:

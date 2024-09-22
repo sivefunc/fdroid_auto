@@ -1,3 +1,14 @@
+"""
+Here all functions related to android packages are located:
+    uninstall_packages()
+    download_packages()
+    uninstall_packages()
+    packages_from_file()
+
+Do 'man adb' that way you know what every command does.
+Check also every function Notes.
+"""
+
 import urllib.error     # URLError, HTTPError, ContentTooShortError
 import urllib.request   # GET requests for downloading F-droid apks.
 import subprocess       # subprocess.run for adb commands
@@ -62,6 +73,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     """
 
     table = Table(
+            # Headers
             "N", "Package", "Message",
             title = "Uninstalling",
             highlight=True
@@ -90,7 +102,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
             else:
                 style = SUCCESS_STYLE
                 p_uninstalled += 1
-            
+
             table.add_row(
                     f"{idx+1}",
                     f"{package}",
@@ -148,6 +160,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     """
 
     table = Table(
+            # Headers
             "N", "Package", "Message",
             title="Downloading",
             highlight=True,
@@ -174,6 +187,8 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             vertical_overflow="visible"):
 
         for idx, package in enumerate(packages):
+
+            # GET request to get suggested version
             url = f"https://f-droid.org/api/v1/packages/{package}"
             request = urllib.request.Request(url)
 
@@ -187,6 +202,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                     file = response.read()
 
             # Handling of urllib exceptions
+            # Should I include HTTPException?
             except (urllib.error.URLError,
                     urllib.error.HTTPError,
                     urllib.error.ContentTooShortError) as urllib_error:
@@ -194,12 +210,14 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                 style = ERROR_STYLE
                 message = urllib_error
                 p_not_downloaded += 1
-            
+
             else:
+                # GET request now to get the .apk
                 version = json.loads(file)['suggestedVersionCode']
                 package_full = f"{package}_{version}.apk"
                 apk_url = f"https://f-droid.org/repo/{package_full}"
                 path_to_save_apk = os.path.join(dir_path, package_full)
+
                 with (open(os.path.join(dir_path, package_full), "w+b") as
                         binary_file):
 
@@ -212,10 +230,12 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
 
                         with urllib.request.urlopen(request) as response:
                             size = int(response.headers["Content-Length"])
-                            
                             downloading_task = progress.add_task(
-                                    "Downloading...", total=size)
+                                    "Downloading", total=size)
 
+                            # Reading the bytes and saving it into file
+                            # In chunks of io.DEFAULT_BUFFER_SIZE
+                            # to measure time.
                             while (apk_bytes := response.read(
                                     io.DEFAULT_BUFFER_SIZE)):
                                 binary_file.write(apk_bytes)
@@ -225,6 +245,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
 
                             progress.remove_task(downloading_task)
 
+                    # Handling of urrlib exceptions.
                     except (urllib.error.URLError,
                             urllib.error.HTTPError,
                             urllib.error.ContentTooShortError) as urllib_error:
@@ -244,7 +265,6 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                     f"{message}", style=style)
 
             table.add_section()
-
 
     return p_downloaded, p_not_downloaded
 
@@ -286,7 +306,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
                 f"Path: {dir_path} is not a directory",
                 style=ERROR_STYLE)
         return p_installed, p_not_installed
-    
+
     # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
     install_command = "adb install".split()
     packages = [apk for apk in os.listdir(dir_path) if apk.endswith('.apk')]
@@ -298,6 +318,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
         return p_installed, p_not_installed
 
     table = Table(
+            # Headers
             "N", "Package", "Message",
             title = "Installing",
             highlight=True
