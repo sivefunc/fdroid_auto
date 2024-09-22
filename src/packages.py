@@ -16,6 +16,8 @@ import json             # json.load
 import io               # io.DEFAULT_BUFFER_SIZE
 import os               # os.path.join, os.path.listdir, os.mkdir
 
+from rich.panel import Panel
+from rich.align import Align
 from rich.live import Live
 from rich.table import Table
 from rich.console import Group
@@ -59,7 +61,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     adb shell pm uninstall -k --user 0
     |   |     |  |         |  |
     |   |     |  |         |  |_ Remove the apk from the default (first)
-    |   |     |  |         |     user, it's like directories.
+    |   |     |  |         |     user 0, it's like directories.
     |   |     |  |         |   
     |   |     |  |         |_ Keep cache and data, e.g: Contacts.
     |   |     |  |
@@ -72,11 +74,13 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     |_ CLI Tool that communicates with the device.
     """
 
-    table = Table(
-            # Headers
-            "N", "Package", "Message",
-            title = "Uninstalling",
-            highlight=True
+    table = Align.center(
+                Table(
+                # Headers
+                "N", "Package", "Message",
+                title = "Uninstalling",
+                highlight=True),
+            vertical="middle"
             )
 
     p_uninstalled = p_not_uninstalled = 0
@@ -85,7 +89,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     # We use Live() to allow having Table being printed without being seen
     # multiples times just only one.
     # It's like system("clear")
-    with Live(table, refresh_per_second=30, vertical_overflow="visible"):
+    with Live(Panel(table), refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     uninstall_command + [package],
@@ -106,13 +110,13 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
                 style = SUCCESS_STYLE
                 p_uninstalled += 1
 
-            table.add_row(
+            table.renderable.add_row(
                     f"{idx+1}",
                     f"{package}",
                     f"{message}",
                     style=style)
 
-            table.add_section()
+            table.renderable.add_section()
 
     return p_uninstalled, p_not_uninstalled
 
@@ -162,11 +166,13 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
         This way we get the .apk file.
     """
 
-    table = Table(
-            # Headers
-            "N", "Package", "Message",
-            title="Downloading",
-            highlight=True,
+    table = Align.center(
+                Table(
+                # Headers
+                "N", "Package", "Message",
+                title = "Downloading",
+                highlight=True),
+            vertical="middle"
             )
 
     p_downloaded = p_not_downloaded = 0
@@ -188,7 +194,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     # We group the Table and the progress bar to allow being displayed at the
     # same time.
     with Live(
-            Group(table, progress),
+            Panel(Group(table, progress)),
             refresh_per_second=30,
             vertical_overflow="visible"):
 
@@ -199,7 +205,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             request = urllib.request.Request(url)
 
             try:
-                table.add_row(
+                table.renderable.add_row(
                         f"{idx+1}",
                         f"{package}",
                         f"GET suggested version on: {url}")
@@ -229,7 +235,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
 
                     request = urllib.request.Request(apk_url)
                     try:
-                        table.add_row(
+                        table.renderable.add_row(
                                 "",
                                 "",
                                 f"GET apk version on {version} on: {apk_url}")
@@ -265,12 +271,12 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                         message = f"Sucess saved on {path_to_save_apk}"
                         p_downloaded += 1
 
-            table.add_row(
+            table.renderable.add_row(
                     "",
                     "",
                     f"{message}", style=style)
 
-            table.add_section()
+            table.renderable.add_section()
 
     return p_downloaded, p_not_downloaded
 
@@ -323,17 +329,19 @@ def install_packages(dir_path: str) -> tuple[int, int]:
                 style=ERROR_STYLE)
         return p_installed, p_not_installed
 
-    table = Table(
-            # Headers
-            "N", "Package", "Message",
-            title = "Installing",
-            highlight=True
+    table = Align.center(
+                Table(
+                # Headers
+                "N", "Package", "Message",
+                title = "Installing",
+                highlight=True),
+            vertical="middle"
             )
 
     # We use Live() to allow having Table being printed without being seen
     # multiples times just only one.
     # It's like system("clear")
-    with Live(table, refresh_per_second=30, vertical_overflow="visible"):
+    with Live(Panel(table), refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     install_command + [os.path.join(dir_path, package)],
@@ -353,13 +361,13 @@ def install_packages(dir_path: str) -> tuple[int, int]:
                 style = SUCCESS_STYLE
                 p_installed += 1
 
-            table.add_row(
+            table.renderable.add_row(
                     f"{idx+1}",
                     f"{package}",
                     f"{message}",
                     style=style)
 
-            table.add_section()
+            table.renderable.add_section()
 
     return p_installed, p_not_installed
 
