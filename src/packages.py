@@ -20,8 +20,8 @@ from rich.live import Live
 from rich.table import Table
 from rich.console import Group
 from rich.progress import (
-        BarColumn,
         Progress,
+        BarColumn,
         TaskProgressColumn,
         TimeElapsedColumn,
         TimeRemainingColumn,
@@ -82,6 +82,9 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     p_uninstalled = p_not_uninstalled = 0
     uninstall_command = "adb shell pm uninstall -k --user 0".split()
 
+    # We use Live() to allow having Table being printed without being seen
+    # multiples times just only one.
+    # It's like system("clear")
     with Live(table, refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
@@ -181,6 +184,9 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
     )
 
     progress = Progress(*progress_columns)
+
+    # We group the Table and the progress bar to allow being displayed at the
+    # same time.
     with Live(
             Group(table, progress),
             refresh_per_second=30,
@@ -324,6 +330,9 @@ def install_packages(dir_path: str) -> tuple[int, int]:
             highlight=True
             )
 
+    # We use Live() to allow having Table being printed without being seen
+    # multiples times just only one.
+    # It's like system("clear")
     with Live(table, refresh_per_second=30, vertical_overflow="visible"):
         for idx, package in enumerate(packages):
             result = subprocess.run(
