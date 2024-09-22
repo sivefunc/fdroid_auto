@@ -7,6 +7,8 @@ Here all functions related to android packages are located:
 
 Do 'man adb' that way you know what every command does.
 Check also every function Notes.
+
+sudo apt-get intall adb
 """
 
 # Built-in (hopefully)
@@ -82,7 +84,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     are not "system level", so org.lineageos.jelly works but
     org.fdroid.fdroid doesn't.
     """
-    
+
     #  ________________________
     # | N | Packages | Message |
     #  ------------------------
@@ -100,12 +102,12 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
             )
 
     p_uninstalled = p_not_uninstalled = 0
-    uninstall_command = "adb shell pm uninstall -k --user 0".split()
 
     # We use Live() to allow having Table being printed without being seen
     # multiples times just only one.
     # It's like system("clear")
     with Live(Panel(table), refresh_per_second=30, vertical_overflow="visible"):
+        uninstall_command = "adb shell pm uninstall -k --user 0".split()
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     uninstall_command + [package],
@@ -233,7 +235,6 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             vertical_overflow="visible"):
 
         for idx, package in enumerate(packages):
-
             # GET request to get suggested version
             url = f"https://f-droid.org/api/v1/packages/{package}"
             request = urllib.request.Request(url)
@@ -317,7 +318,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             # Add the line to separate this download from others download.
             # an succes download should look like this:
             #  _____________________________________________________________
-            # | N | Packages | Message                                      | 
+            # | N | Packages | Message                                      |
             #  -------------------------------------------------------------|
             # | 1 | abc.def  | GET suggested version on API/abc.def         |
             # |   |          | GET apk version 12.34 on API/abc.def_version |
@@ -362,12 +363,10 @@ def install_packages(dir_path: str) -> tuple[int, int]:
     p_installed = p_not_installed = 0
     if not os.path.isdir(dir_path):
         CONSOLE.print(
-                f"Path: {dir_path} is not a directory",
+                f"Path: {dir_path} is not a APK directory",
                 style=ERROR_STYLE)
         return p_installed, p_not_installed
 
-    # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
-    install_command = "adb install".split()
     packages = [apk for apk in os.listdir(dir_path) if apk.endswith('.apk')]
 
     if not packages:
@@ -389,6 +388,8 @@ def install_packages(dir_path: str) -> tuple[int, int]:
     # multiples times just only one.
     # It's like system("clear")
     with Live(Panel(table), refresh_per_second=30, vertical_overflow="visible"):
+        # https://stackoverflow.com/questions/50540334/install-apk-using-root-handling-new-limitations-of-data-local-tmp-folder
+        install_command = "adb install".split()
         for idx, package in enumerate(packages):
             result = subprocess.run(
                     install_command + [os.path.join(dir_path, package)],

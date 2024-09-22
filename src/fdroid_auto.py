@@ -24,6 +24,7 @@ def main():
 
     t_args = term_args()
 
+    # First step
     if t_args.uninstall:
         file_path = t_args.uninstall
         p_uninstall = p_not_uninstall = 0
@@ -53,6 +54,7 @@ def main():
                 f"{p_not_uninstall} Packages were not uninstalled",
                 style=ERROR_STYLE)
 
+    # Second step
     if t_args.download:
         file_path, dir_path = t_args.download
         p_download = p_not_download = 0
@@ -82,6 +84,7 @@ def main():
                 f"{p_not_download} Packages were not downloaded",
                 style=ERROR_STYLE)
 
+    # Last step
     if t_args.install:
         dir_path = t_args.install
         p_install, p_not_install = install_packages(dir_path)
