@@ -155,6 +155,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
 
     p_downloaded = p_not_downloaded = 0
     if not os.path.exists(dir_path):
+        CONSOLE.print(f"Path: {dir_path} doesn't exist, creating...")
         os.mkdir(dir_path)
 
     progress_columns = (
