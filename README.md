@@ -72,7 +72,7 @@ usage: fdroid-auto [options]
 - `-i [DIR],        --install [DIR]               → Install ALL packages .apk
                                                         listed from DIR on
                                                         device using adb.`
-- `n,               --notation`                   → Shows how to format the
+- `n,               --notation                    → Shows how to format the
                                                         FILE and exit.`
 ## :notebook: Notes <a name="notes"></a>
 - :bangbang: The order of events occur in the following way:
