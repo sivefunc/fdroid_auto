@@ -36,6 +36,7 @@ This is useful when doing Factory resets or changing of :iphone: phone and don't
 ```sh
 sudo apt-get install python3 python3-pip python3-setuptools adb
 ```
+
 ### :snake: Option 1: Pypi
 ```sh
 python3 -m pip install fdroid-auto
@@ -45,7 +46,7 @@ python3 -m pip install fdroid-auto
 ```sh
 git clone https://codeberg.org/Sivefunc/fdroid_auto
 cd fdroid_auto
-pip install .
+python3 -m pip install .
 ```
 
 ## :computer: Usage <a name="usage"></a>
