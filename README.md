@@ -1,9 +1,11 @@
 # :robot: Fdroid-auto
 [https://github.com/f-droid/artwork]: #
-<img align="center"
-    src="readme_res/logo.svg"
-    height="200"
-    alt="Logo of Fdroid with some apps in the background"><br>
+<div align="center">
+    <img align="center"
+        src="readme_res/logo.svg"
+        height="200"
+        alt="Logo of Fdroid with some apps in the background"><br>
+</div>
 
 # :bookmark: Table of contents
 1. [About](#about)
