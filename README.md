@@ -16,7 +16,7 @@
 ## :question: About <a name="about"></a>
 Fdroid-auto is a very little program that automates the process of uninstalling, downloading and installing [F-droid](https://f-droid.org) apk's through [ADB](https://developer.android.com/tools/adb).
 
-This is useful when doing Factory resets or changing of phone and don't want to deal with the repetitive task of [bootloop](https://en.wikipedia.org/wiki/Booting#Bootloop) while uninstalling because you didn't remember it was an important package or manually downloading F-droid apks by typing them into the search bar and then manually installing it.
+This is useful when doing Factory resets or changing of :iphone: phone and don't want to deal with the :repeat: repetitive task of :scream: [bootloop](https://en.wikipedia.org/wiki/Booting#Bootloop) while uninstalling because you didn't :brain: remember it was an important package or manually downloading F-droid apks by typing them into the search bar :mag: and then manually installing it.
 
 ## :file_folder: Installation <a name="installation"></a>
 
@@ -88,6 +88,8 @@ usage: fdroid-auto [options]
 - I haven't tested ADB through [Wi-Fi](https://developer.android.com/tools/adb#connect-to-a-device-over-wi-fi) only USB.
 - Manuals I used: man adb or adb shell pm
 - Read the source code to know things are done, specially [packages.py](src/packages.py)
+- The `-k` option on uninstall preserves app data, so you can reinstall with install-existing and not lose data.
+- I recommend when looking for files to uninstall instead of the traditional `adb shell pm list packages` use [App Manager](https://f-droid.org/en/packages/io.github.muntashirakon.AppManager/)
 
 ## Made by :link: [Sivefunc](https://gitlab.com/sivefunc)
 ## Licensed under :link: [GPLv3](LICENSE)
