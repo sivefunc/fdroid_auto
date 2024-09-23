@@ -1,6 +1,3 @@
 # Sivefunc uninstall example
-package1.longname
-package2.sqrt
-android.vim
-useless.abc
-one.two.three
+this.package.doesnt.exist.1
+rkr.simplekeyboard.inputmethod
