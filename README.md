@@ -71,7 +71,7 @@ fdroid_auto -i apps/                    # Install packages listed
 ```
 ### :handshake: Joined together
 ```sh
-python3 fdroid_auto.py -u apps/uninstall.txt \
+fdroid_auto.py -u apps/uninstall.txt \
                        -d apps/download.txt apps/ \
                        -i apps/
 ```
