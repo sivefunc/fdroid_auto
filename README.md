@@ -1,8 +1,18 @@
+[READ in case you are using PYPI]: #
+[Pypi doesn't render package/relative path images and not raw]: #
+[Pypi doesn't render Emojis]: #
+[Pypi doesn't render LaTeX]: #
+[https://github.com/theacodes/cmarkgfm]: #
+[https://github.com/pypi/warehouse/issues/5246]: #
+[https://github.com/pypi/warehouse/issues/16134]: #
+[Mainly it's because HTML tags are omitted according to theacodes]: #
+[So I recommend you rendering mardown locally or check my gitlab/codeberg]: #
+
 # :robot: Fdroid-auto
 [https://github.com/f-droid/artwork]: #
 <div align="center">
     <img align="center"
-        src="readme_res/logo.svg"
+        src="https://codeberg.org/Sivefunc/fdroid_auto/raw/branch/main/readme_res/logo.svg"
         height="200"
         alt="Logo of Fdroid with some apps in the background"><br>
 </div>
@@ -22,29 +32,42 @@ This is useful when doing Factory resets or changing of :iphone: phone and don't
 
 ## :file_folder: Installation <a name="installation"></a>
 
-### :hand: Manual
+### :penguin: Binary dependencies (Unix)
 ```sh
-sudo apt-get install adb python3
-git clone https://codeberg.org/Sivefunc/fdroid-auto
-cd fdroid-auto
-python3 -m pip install rich
+sudo apt-get install python3 python3-pip python3-setuptools adb
 ```
-##
+### :snake: Pypi
+```
+python3 -m pip install fdroid-auto
+```
+
+### :hand: Git repository (Still connects to Pypi)
+```sh
+git clone https://codeberg.org/Sivefunc/fdroid_auto
+cd fdroid_auto
+pip install .
+```
 
 ## :computer: Usage <a name="usage"></a>
+1. Enable [USB Debugging](https://developer.android.com/studio/debug/dev-options#Enable-debugging) on your Android device :phone:
+2. Connect your Android device to the Host computer through the USB cable.
+3. There are two files [apps/uninstall.txt](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/src/apps/uninstall.txt) and [apps/download.txt](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/src/apps/download.txt) which are examples files you can download and use.
+
+usage: fdroid_auto [options](#options)
+
 ### Uninstalling
 ```sh
-python3 fdroid_auto.py -u apps/uninstall.txt       # Uninstall packages listed.
+fdroid_auto -u apps/uninstall.txt       # Uninstall packages listed.
 ```
 ### Downloading
 ```sh
-python3 fdroid_auto.py -d apps/download.txt apps/  # Download packages listed
-                                                   # and saved them on apps/
+fdroid_auto -d apps/download.txt apps/  # Download packages listed
+                                        # and saved them on apps/
 ```
 ### Installing
 ```sh
-python3 fdroid_auto.py -i apps/                    # Install packages listed
-                                                   # on directory apps/
+fdroid_auto -i apps/                    # Install packages listed
+                                        # on directory apps/
 ```
 ### :handshake: Joined together
 ```sh
@@ -53,14 +76,12 @@ python3 fdroid_auto.py -u apps/uninstall.txt \
                        -i apps/
 ```
 
-## Output <a name="output"></a>
+## :page_facing_up: Output <a name="output"></a>
 | Uninstalling          | Downloading           | Installing
 | :---:  		        | :---:    		        | :---:
-| ![1](readme_res/uninstall.png)| ![2](readme_res/download.png)| ![3](readme_res/install.png)
+| ![1](https://codeberg.org/Sivefunc/fdroid_auto/raw/branch/main/readme_res/uninstall.png)| ![2](https://codeberg.org/Sivefunc/fdroid_auto/raw/branch/main/readme_res/download.png)| ![3](https://codeberg.org/Sivefunc/fdroid_auto/raw/branch/main/readme_res/install.png)
 
 ## :gear: Options <a name="options"></a>
-usage: fdroid-auto [options]
-
 - `-h,              --help                        → show this help message
                                                         and exit.`
 - `-v,              --version                     → show program's version
@@ -82,16 +103,15 @@ usage: fdroid-auto [options]
     - Download
     - Install:   `adb install`
 
-- There are two files [apps/uninstall.txt](src/apps/uninstall.txt) and [apps/download.txt](src/apps/download.txt) which are examples files you can use.
 - Suggested versions are the ones downloaded (not the latest unstable? version).
 - :shield: [Official](https://f-droid.org/docs/All_our_APIs/) repository is the one being used.
 - [Third party repositories](https://forum.f-droid.org/t/known-repositories/721) are not supported like [Bromite](https://www.bromite.org/fdroid)
 - Uninstall/Install of apps is not limited to only F-droid, if these are installed or on a directory respectively.
 - I haven't tested ADB through [Wi-Fi](https://developer.android.com/tools/adb#connect-to-a-device-over-wi-fi) only USB.
 - Manuals I used: man adb or adb shell pm
-- Read the source code to know things are done, specially [packages.py](src/packages.py)
+- Read the source code to know things are done, specially [packages.py](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/src/packages.py)
 - The `-k` option on uninstall preserves app data, so you can reinstall with install-existing and not lose data.
 - I recommend when looking for files to uninstall instead of the traditional `adb shell pm list packages` use [App Manager](https://f-droid.org/en/packages/io.github.muntashirakon.AppManager/)
 
 ## Made by :link: [Sivefunc](https://gitlab.com/sivefunc)
-## Licensed under :link: [GPLv3](LICENSE)
+## Licensed under :link: [GPLv3](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/LICENSE)

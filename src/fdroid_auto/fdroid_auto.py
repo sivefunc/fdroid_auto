@@ -4,9 +4,9 @@ python3 fdroid_auto.py --help
 To get you informated and If wanna look deeper read the code.
 """
 
-from defaults import CONSOLE, SUCCESS_STYLE, ERROR_STYLE
-from term_args import term_args
-from packages import (packages_from_file,
+from .defaults import CONSOLE, SUCCESS_STYLE, ERROR_STYLE
+from .term_args import term_args
+from .packages import (packages_from_file,
                         uninstall_packages,
                         download_packages,
                         install_packages)

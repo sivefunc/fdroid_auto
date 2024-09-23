@@ -1,5 +1,6 @@
 """ Single function just to parse CLI args """
 
+from .version import __version__
 import argparse
 import sys
 
@@ -18,7 +19,7 @@ def term_args() -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(
-            prog="fdroid-auto",
+            prog="fdroid_auto",
             formatter_class=argparse.RawTextHelpFormatter,
             usage='%(prog)s [options]',
             description=
@@ -37,8 +38,8 @@ F-droid apks through ADB.
     parser.add_argument(
             '-v','--version',
             action='version',
-            version="""
-%(prog)s v1.0.0
+            version=f"""
+%(prog)s v{__version__}
 Copyright (C) 2024 Sivefunc
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.

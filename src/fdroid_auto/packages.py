@@ -36,7 +36,7 @@ from rich.progress import (
         )
 
 # Global Rich variables shared between fdroid_auto.py and this module.
-from defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
+from .defaults import CONSOLE, ERROR_STYLE, SUCCESS_STYLE
 
 def uninstall_packages(packages: list[str]) -> tuple[int, int]:
     """

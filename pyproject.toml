@@ -1,0 +1,43 @@
+# This is some references that were used while creating this
+# I don't know it fully but here it is:
+# https://devsjc.github.io/blog/20240627-the-complete-guide-to-pyproject-toml/
+# https://packaging.python.org/en/latest/
+# https://toml.io/en/
+# https://setuptools.pypa.io/en/latest/setuptools.html
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fdroid_auto"
+dynamic = ["version"]
+
+authors = [
+  { name="sivefunc", email="sivefunc@tuta.io" },
+]
+description = "Little program to automate installation and removal of android apps. "
+readme = {file = 'README.md', content-type='text/markdown', charset="UTF-8", variant="GFM"}
+requires-python = ">=3.11"
+
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "rich>=13.8.0"
+]
+
+keywords = ['linux', 'android', 'python3', 'cli']
+
+[tool.setuptools.dynamic]
+version = {attr = "fdroid_auto.__version__"}
+
+[project.urls]
+Homepage = "https://codeberg.org/Sivefunc/fdroid_auto"
+
+[project.scripts]
+fdroid_auto = "fdroid_auto.fdroid_auto:main"
