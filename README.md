@@ -49,7 +49,7 @@ pip install .
 ```
 
 ## :computer: Usage <a name="usage"></a>
-1. Enable [USB Debugging](https://developer.android.com/studio/debug/dev-options#Enable-debugging) on your Android device :phone:
+1. Enable [USB Debugging](https://developer.android.com/studio/debug/dev-options#Enable-debugging) on your Android device :iphone:
 2. Connect your Android device to the Host computer through the USB cable.
 3. There are two files [apps/uninstall.txt](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/src/apps/uninstall.txt) and [apps/download.txt](https://codeberg.org/Sivefunc/fdroid_auto/src/branch/main/src/apps/download.txt) which are examples files you can download and use.
 
