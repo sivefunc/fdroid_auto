@@ -36,12 +36,12 @@ This is useful when doing Factory resets or changing of :iphone: phone and don't
 ```sh
 sudo apt-get install python3 python3-pip python3-setuptools adb
 ```
-### :snake: Pypi
-```
+### :snake: Option 1: Pypi
+```sh
 python3 -m pip install fdroid-auto
 ```
 
-### :hand: Git repository (Still connects to Pypi)
+### :hand: Option 2: Git repository (Still connects to Pypi)
 ```sh
 git clone https://codeberg.org/Sivefunc/fdroid_auto
 cd fdroid_auto
@@ -55,16 +55,16 @@ pip install .
 
 usage: fdroid_auto [options](#options)
 
-### Uninstalling
+### :clipboard: Uninstalling
 ```sh
 fdroid_auto -u apps/uninstall.txt       # Uninstall packages listed.
 ```
-### Downloading
+### :clipboard: Downloading
 ```sh
 fdroid_auto -d apps/download.txt apps/  # Download packages listed
                                         # and saved them on apps/
 ```
-### Installing
+### :clipboard: Installing
 ```sh
 fdroid_auto -i apps/                    # Install packages listed
                                         # on directory apps/
@@ -72,8 +72,8 @@ fdroid_auto -i apps/                    # Install packages listed
 ### :handshake: Joined together
 ```sh
 fdroid_auto.py -u apps/uninstall.txt \
-                       -d apps/download.txt apps/ \
-                       -i apps/
+               -d apps/download.txt apps/ \
+               -i apps/
 ```
 
 ## :page_facing_up: Output <a name="output"></a>
