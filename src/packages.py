@@ -20,6 +20,7 @@ import io               # io.DEFAULT_BUFFER_SIZE
 import os               # os.path.join, os.path.listdir, os.mkdir
 
 # Rich library
+from rich.markup import escape
 from rich.panel import Panel
 from rich.align import Align
 from rich.live import Live
@@ -132,7 +133,7 @@ def uninstall_packages(packages: list[str]) -> tuple[int, int]:
             table.renderable.add_row(
                     f"{idx+1}",
                     f"{package}",
-                    f"{message}",
+                    f"{escape(message)}",
                     style=style)
 
             # Add a line by default it doesn't add a line each time a row
@@ -312,7 +313,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
             table.renderable.add_row(
                     "",
                     "",
-                    f"{message}", style=style)
+                    f"{escape(message)}", style=style)
 
             table.renderable.add_section()
             # Add the line to separate this download from others download.
@@ -412,7 +413,7 @@ def install_packages(dir_path: str) -> tuple[int, int]:
             table.renderable.add_row(
                     f"{idx+1}",
                     f"{package}",
-                    f"{message}",
+                    f"{escape(message)}",
                     style=style)
 
             table.renderable.add_section() # Add a line between each row.
