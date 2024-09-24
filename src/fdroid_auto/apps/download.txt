@@ -1,2 +1,59 @@
-this.package.doesnt.exist.1
+# Sivefunc Download (You can copy it)
+
+# Fdroid client: https://f-droid.org
 org.fdroid.fdroid
+
+# Google playstore: https://aurorastore.org/
+com.aurora.store
+
+# Fossify apps suite: https://github.com/FossifyOrg
+# org.fossify.keyboard ---> I don't use this keyboard app
+# org.fossify.filemanager --> Neither this
+org.fossify.phone
+org.fossify.notes
+org.fossify.clock
+org.fossify.calendar
+org.fossify.gallery
+org.fossify.messages
+org.fossify.voicerecorder
+org.fossify.contacts
+org.fossify.musicplayer
+
+# File manager: https://github.com/zhanghai/MaterialFiles
+me.zhanghai.android.files
+
+# Terminal emulator: https://termux.dev/en/
+com.termux
+
+# VPN: https://proton.me/
+ch.protonvpn.android
+
+# Calculator: https://github.com/forzzzzz/Calculator-You
+com.marktka.calculatorYou
+
+# 2FA: https://github.com/beemdevelopment/Aegis
+com.beemdevelopment.aegis
+
+# Camera: https://opencamera.org.uk
+net.sourceforge.opencamera
+
+# Keyboard: https://github.com/florisboard/florisboard
+dev.patrickgold.florisboard
+
+# PDF viewer: https://mupdf.com/
+com.artifex.mupdf.viewer.app
+
+# Office (odt, docx, xlsx, etc): https://www.libreoffice.org
+org.documentfoundation.libreoffice
+
+# Web Browser: https://gitlab.com/divested-mobile/mull-fenix
+us.spotco.fennec_dos
+
+# Icon pack: https://github.com/Arcticons-Team/Arcticons
+com.donnnno.arcticons.you
+
+# Telegram: https://github.com/Telegram-FOSS-Team/Telegram-FOSS
+org.telegram.messenger
+
+# App manager: https://github.com/MuntashirAkon/AppManager
+io.github.muntashirakon.AppManager

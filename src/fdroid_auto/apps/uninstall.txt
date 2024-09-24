@@ -1,3 +1,47 @@
 # Sivefunc uninstall example
-this.package.doesnt.exist.1
-rkr.simplekeyboard.inputmethod
+# LineageOS
+
+# Keyboard
+com.android.inputmethod.latin
+
+# Audio player
+org.lineageos.audiofx
+
+# Web browser
+org.lineageos.jelly
+
+# Calculator
+com.android.calculator2
+
+# Calendar
+org.lineageos.etar
+
+# Camera
+org.lineageos.snap
+
+# Clock
+com.android.deskclock
+
+# Contacts
+com.android.contacts
+
+# File manager
+com.android.documentsui
+
+# FM radio
+com.caf.fmradio
+
+# Gallery app
+com.android.gallery3d
+
+# Message app
+com.android.messaging
+
+# Music app
+org.lineageos.eleven
+
+# Calls app
+com.android.dialer
+
+# Voice recorder
+org.lineageos.recorder
