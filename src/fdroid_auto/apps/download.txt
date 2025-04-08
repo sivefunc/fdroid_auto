@@ -46,7 +46,7 @@ com.artifex.mupdf.viewer.app
 # Office (odt, docx, xlsx, etc): https://www.libreoffice.org
 org.documentfoundation.libreoffice
 
-# Web Browser: https://gitlab.com/divested-mobile/mull-fenix
+# Web browser: https://hg.mozilla.org/mozilla-central/file/tip/mobile/android
 us.spotco.fennec_dos
 
 # Icon pack: https://github.com/Arcticons-Team/Arcticons
