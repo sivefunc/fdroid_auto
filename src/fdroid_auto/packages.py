@@ -256,7 +256,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                     urllib.error.ContentTooShortError) as urllib_error:
 
                 style = ERROR_STYLE
-                message = urllib_error
+                message = str(urllib_error)
                 p_not_downloaded += 1
 
             else:
@@ -299,7 +299,7 @@ def download_packages(packages: list[str], dir_path: str) -> tuple[int, int]:
                             urllib.error.ContentTooShortError) as urllib_error:
 
                         style = ERROR_STYLE
-                        message = urllib_error
+                        message = str(urllib_error)
                         p_not_downloaded += 1
 
                     else:
