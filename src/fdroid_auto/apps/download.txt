@@ -47,7 +47,7 @@ com.artifex.mupdf.viewer.app
 org.documentfoundation.libreoffice
 
 # Web browser: https://hg.mozilla.org/mozilla-central/file/tip/mobile/android
-us.spotco.fennec_dos
+org.mozilla.fennec_fdroid
 
 # Icon pack: https://github.com/Arcticons-Team/Arcticons
 com.donnnno.arcticons.you
